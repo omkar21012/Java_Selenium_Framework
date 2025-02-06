@@ -1,0 +1,73 @@
+package Tests;
+
+import Pages.EbayHomePage;
+import Pages.ProductDetailsPage;
+import io.github.bonigarcia.wdm.WebDriverManager;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.edge.EdgeDriver;
+import org.testng.Assert;
+import org.testng.annotations.AfterClass;
+import org.testng.annotations.BeforeClass;
+import org.testng.annotations.Test;
+
+import java.util.ArrayList;
+import java.util.Set;
+
+public class EbayCartCounter {
+    private static String SEARCH_INPUT;
+    WebDriver driver;
+
+
+    static {
+        SEARCH_INPUT = "BOOK";
+    }
+
+
+    public EbayCartCounter() {
+
+    }
+
+    @BeforeClass
+    public void beforeClass()
+    {
+        WebDriverManager.edgedriver().setup();
+        driver = new EdgeDriver();
+
+        driver.get("https://www.ebay.com/");
+        driver.manage().window().maximize();
+    }
+
+    @Test
+    public void cartCounterUpdate() {
+
+
+
+        EbayHomePage ebayHomePage = new EbayHomePage(driver);
+        ProductDetailsPage productDetailsPage = new ProductDetailsPage(driver);
+
+        ebayHomePage.SearchText(SEARCH_INPUT);
+        ebayHomePage.ClickOnSearchButton();
+        String Result1 = productDetailsPage.GetAddToCartCount();
+
+        ebayHomePage.SelectFirstResults(1);
+
+        Set<String> windowHandles = driver.getWindowHandles();
+        ArrayList<String> tabs = new ArrayList<>(windowHandles);
+        driver.switchTo().window(tabs.get(1));
+
+
+        productDetailsPage.ClickOnaddcartButton();
+        String Result2 = productDetailsPage.GetAddToCartCount();
+
+
+        Assert.assertTrue( Result2.contains("1"),"cart is not updated");
+
+    }
+
+    @AfterClass
+    public void after(){
+
+        driver.quit();
+    }
+
+}
