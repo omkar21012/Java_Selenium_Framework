@@ -15,12 +15,12 @@ import java.util.Set;
 
 public class EbayCartCounter {
     private static String SEARCH_INPUT;
-    WebDriver driver;
-
 
     static {
         SEARCH_INPUT = "BOOK";
     }
+
+    WebDriver driver;
 
 
     public EbayCartCounter() {
@@ -28,8 +28,7 @@ public class EbayCartCounter {
     }
 
     @BeforeClass
-    public void beforeClass()
-    {
+    public void beforeClass() {
         WebDriverManager.edgedriver().setup();
         driver = new EdgeDriver();
 
@@ -39,7 +38,6 @@ public class EbayCartCounter {
 
     @Test
     public void cartCounterUpdate() {
-
 
 
         EbayHomePage ebayHomePage = new EbayHomePage(driver);
@@ -60,12 +58,12 @@ public class EbayCartCounter {
         String Result2 = productDetailsPage.GetAddToCartCount();
 
 
-        Assert.assertTrue( Result2.contains("1"),"cart is not updated");
+        Assert.assertTrue(Result2.contains("1"), "cart is not updated");
 
     }
 
     @AfterClass
-    public void after(){
+    public void after() {
 
         driver.quit();
     }

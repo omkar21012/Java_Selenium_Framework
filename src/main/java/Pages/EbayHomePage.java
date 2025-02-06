@@ -10,6 +10,13 @@ import java.util.List;
 public class EbayHomePage extends BasePage {
 
 
+    @FindBy(xpath = "//input[@title='Search']")
+    private WebElement searchBox;
+    @FindBy(css = "[id='gh-search-btn'] ")
+    private WebElement searchButton;
+    @FindBy(xpath = "//ul[@class='srp-results srp-list clearfix']//div[@class='s-item__title']")
+    private List<WebElement> booksResults;
+
     /**
      * Instantiates a new base page.
      *
@@ -20,16 +27,6 @@ public class EbayHomePage extends BasePage {
 
 
     }
-
-    @FindBy(xpath = "//input[@title='Search']")
-    private WebElement searchBox;
-
-    @FindBy(css = "[id='gh-search-btn'] ")
-    private WebElement searchButton;
-
-    @FindBy(xpath = "//ul[@class='srp-results srp-list clearfix']//div[@class='s-item__title']")
-    private List<WebElement> booksResults;
-
 
     public void SearchText(String Input) {
         searchBox.click();

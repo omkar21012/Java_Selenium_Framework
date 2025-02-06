@@ -1,12 +1,12 @@
 package Pages;
 
-import java.time.Duration;
-
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.support.PageFactory;
 import org.openqa.selenium.support.ui.FluentWait;
+
+import java.time.Duration;
 
 /**
  * The Class BasePage every Page should extend this class.
@@ -15,10 +15,14 @@ import org.openqa.selenium.support.ui.FluentWait;
  */
 public class BasePage {
 
-    /** The driver. */
+    /**
+     * The driver.
+     */
     protected WebDriver driver;
 
-    /** The waiter. */
+    /**
+     * The waiter.
+     */
     protected FluentWait<WebDriver> waiter;
 
     /**

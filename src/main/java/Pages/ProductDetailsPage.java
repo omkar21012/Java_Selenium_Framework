@@ -5,6 +5,11 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 
 public class ProductDetailsPage extends BasePage {
+    @FindBy(xpath = "//a[@id='atcBtn_btn_1']")
+    private WebElement clickAddToCart;
+    @FindBy(className = "gh-cart__icon")
+    private WebElement addToCartlOGO;
+
     /**
      * Instantiates a new base page.
      *
@@ -14,23 +19,12 @@ public class ProductDetailsPage extends BasePage {
         super(driver);
     }
 
-    @FindBy(xpath= "//a[@id='atcBtn_btn_1']")
-    private WebElement clickAddToCart;
-
-    @FindBy(className = "gh-cart__icon")
-    private WebElement addToCartlOGO;
-
-
-
-
-
-    public void ClickOnaddcartButton()
-    {
+    public void ClickOnaddcartButton() {
         clickAddToCart.click();
     }
-    public String GetAddToCartCount()
-    {
-        return   addToCartlOGO.getAttribute("aria-label");
+
+    public String GetAddToCartCount() {
+        return addToCartlOGO.getAttribute("aria-label");
 
     }
 
