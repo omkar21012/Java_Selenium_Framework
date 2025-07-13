@@ -33,6 +33,12 @@ public class EbayHomePage extends BasePage {
         searchBox.sendKeys(Input);
 
     }
+    public boolean isSearchBoxEnabled() {
+        searchBox.isDisplayed();
+        return false;
+    }
+
+
 
     public void ClickOnSearchButton() {
         searchButton.click();
