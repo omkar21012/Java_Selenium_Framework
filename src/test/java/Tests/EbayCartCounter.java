@@ -16,15 +16,20 @@ import java.util.Set;
 public class EbayCartCounter {
     private static String SEARCH_INPUT;
 
+
     static {
         SEARCH_INPUT = "BOOK";
     }
 
     WebDriver driver;
+    EbayHomePage ebayHomePage;
+    ProductDetailsPage productDetailsPage;
 
 
     public EbayCartCounter() {
 
+        ebayHomePage = new EbayHomePage(driver);
+        productDetailsPage = new ProductDetailsPage(driver);
     }
 
     @BeforeClass
@@ -35,6 +40,16 @@ public class EbayCartCounter {
         driver.get("https://www.ebay.com/");
         driver.manage().window().maximize();
     }
+    @Test(priority = 1)
+    public void isSerachBoxEnabled()
+    {
+        boolean isEnabled=  ebayHomePage.isSearchBoxEnabled();
+        Assert.assertTrue(isEnabled,"Search box is not enabled");
+
+    }
+
+
+
 
     @Test
     public void cartCounterUpdate() {
