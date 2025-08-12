@@ -4,6 +4,7 @@ import Pages.EbayHomePage;
 import Pages.ProductDetailsPage;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.edge.EdgeDriver;
 import org.testng.Assert;
 import org.testng.annotations.AfterClass;
@@ -34,8 +35,8 @@ public class EbayCartCounter {
 
     @BeforeClass
     public void beforeClass() {
-        WebDriverManager.edgedriver().setup();
-        driver = new EdgeDriver();
+        WebDriverManager.chromedriver().setup();
+        driver = new ChromeDriver();
 
         driver.get("https://www.ebay.com/");
         driver.manage().window().maximize();
