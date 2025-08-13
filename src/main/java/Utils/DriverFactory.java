@@ -16,9 +16,18 @@ public class DriverFactory {
                 driver = new FirefoxDriver();
                 break;
             case "edge":
+            try {
+                // Try using WebDriverManager first
                 WebDriverManager.edgedriver().setup();
                 driver = new EdgeDriver();
-                break;
+            } catch (Exception e) {
+                // Fallback to local driver path if download fails
+                System.out.println("⚠ WebDriverManager failed. Using local EdgeDriver.");
+                System.setProperty("webdriver.edge.driver", "C:\\Users\\dell\\Downloads\\edgedriver_win64\\msedgedriver.exe");
+                driver = new EdgeDriver();
+            }
+            break;
+
             case "chrome":
             default:
                 WebDriverManager.chromedriver().setup();
