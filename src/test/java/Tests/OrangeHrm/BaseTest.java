@@ -16,6 +16,7 @@ public class BaseTest {
         ScreenshotUtil.clearScreenshotsFolder();
         System.out.println("Cleared screenshots folder before test suite.");
     }
+    @Parameters("browser")
     @BeforeClass
     public void setUp() {
         prop = ConfigReader.initProperties();
