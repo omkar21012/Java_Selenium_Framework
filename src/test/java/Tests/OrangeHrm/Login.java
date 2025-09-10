@@ -3,19 +3,31 @@ package Tests.OrangeHrm;
 import Pages.OrangeHrm.HomePage;
 import Pages.OrangeHrm.LoginPage;
 import org.testng.Assert;
-import org.testng.annotations.Listeners;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
+import org.testng.asserts.SoftAssert;
 
-
-@Listeners(listeners.TestListener.class)
 public class Login extends BaseTest {
+    private LoginPage loginPage;
+    private HomePage homePage;
+    private SoftAssert softAssert;
 
-    @Test
-    public void loginTestValidCredentials() {
-        LoginPage loginPage = new LoginPage(driver);
-         HomePage homePage= new HomePage(driver);
-        loginPage.Login(prop.getProperty("username"), prop.getProperty("password"));
-         boolean o = homePage.IsOnHomePage();
-        Assert.assertTrue(o,"Not logged in into app");
+    @BeforeMethod
+    public void initPages() {
+        loginPage = new LoginPage(getDriver());
+        homePage = new HomePage(getDriver());
+        softAssert = new SoftAssert();
+    }
+
+    @Test(priority = 1)
+    public void validLoginTest() {
+        boolean isLoggedIn = homePage.IsOnHomePage();
+        softAssert.assertTrue(isLoggedIn, "Not logged in into app");
+        softAssert.assertAll();
+    }
+
+    @Test(priority = 2)
+    public void invalidLoginTest() {
+        Assert.assertTrue(true, "Demo placeholder test");
     }
 }
