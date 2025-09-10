@@ -1,41 +1,66 @@
 package Pages;
 
-import org.openqa.selenium.NoSuchElementException;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.FluentWait;
 
 import java.time.Duration;
+import java.util.NoSuchElementException;
 
-/**
- * The Class BasePage every Page should extend this class.
- *
- * @author Bharathish
- */
 public class BasePage {
 
-    /**
-     * The driver.
-     */
     protected WebDriver driver;
-
-    /**
-     * The waiter.
-     */
     protected FluentWait<WebDriver> waiter;
 
-    /**
-     * Instantiates a new base page.
-     *
-     * @param driver the driver
-     */
     public BasePage(WebDriver driver) {
-        super();
         this.driver = driver;
         PageFactory.initElements(driver, this);
-        waiter = new FluentWait<WebDriver>(driver).ignoring(NoSuchElementException.class, WebDriverException.class)
-                .withTimeout(Duration.ofSeconds(10)).pollingEvery(Duration.ofSeconds(2));
+        this.waiter = new FluentWait<>(driver)
+                .withTimeout(Duration.ofSeconds(20))
+                .pollingEvery(Duration.ofSeconds(2))
+                .ignoring(NoSuchElementException.class, WebDriverException.class);
     }
 
+    // ✅ Click method with wait
+    public void click(By locator) {
+        waiter.until(ExpectedConditions.elementToBeClickable(locator)).click();
+    }
+
+    // ✅ Type method
+    public void type(By locator, String text) {
+        WebElement element = waiter.until(ExpectedConditions.visibilityOfElementLocated(locator));
+        element.clear();
+        element.sendKeys(text);
+    }
+
+    // ✅ Get text
+    public String getText(By locator) {
+        return waiter.until(ExpectedConditions.visibilityOfElementLocated(locator)).getText();
+    }
+
+    // ✅ Check if element is visible
+    public boolean isElementVisible(By locator) {
+        try {
+            return waiter.until(ExpectedConditions.visibilityOfElementLocated(locator)).isDisplayed();
+        } catch (TimeoutException e) {
+            return false;
+        }
+    }
+
+    // ✅ Get current page title
+    public String getPageTitle() {
+        return driver.getTitle();
+    }
+
+    // ✅ Get current page URL
+    public String getPageUrl() {
+        return driver.getCurrentUrl();
+    }
+
+    // ✅ Scroll into view
+    public void scrollToElement(By locator) {
+        WebElement element = driver.findElement(locator);
+        ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView(true);", element);
+    }
 }
