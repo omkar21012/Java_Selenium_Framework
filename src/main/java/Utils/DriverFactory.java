@@ -7,44 +7,55 @@ import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 
 public class DriverFactory {
-    private static WebDriver driver;
 
+    // Thread-safe WebDriver (each test thread gets its own instance)
+    private static final ThreadLocal<WebDriver> driver = new ThreadLocal<>();
+
+    /**
+     * Initialize WebDriver for the given browser.
+     * Each thread gets its own driver instance.
+     */
     public static WebDriver initDriver(String browser) {
+        WebDriver localDriver;
+
         switch (browser.toLowerCase()) {
             case "firefox":
                 WebDriverManager.firefoxdriver().setup();
-                driver = new FirefoxDriver();
+                localDriver = new FirefoxDriver();
                 break;
+
             case "edge":
-            try {
-                // Try using WebDriverManager first
                 WebDriverManager.edgedriver().setup();
-                driver = new EdgeDriver();
-            } catch (Exception e) {
-                // Fallback to local driver path if download fails
-                System.out.println("⚠ WebDriverManager failed. Using local EdgeDriver.");
-                System.setProperty("webdriver.edge.driver", "C:\\Users\\dell\\Downloads\\edgedriver_win64\\msedgedriver.exe");
-                driver = new EdgeDriver();
-            }
-            break;
+                localDriver = new EdgeDriver();
+                break;
 
             case "chrome":
             default:
                 WebDriverManager.chromedriver().setup();
-                driver = new ChromeDriver();
+                localDriver = new ChromeDriver();
+                break;
         }
 
-        driver.manage().window().maximize();
-        return driver;
+        localDriver.manage().window().maximize();
+        driver.set(localDriver); // bind driver to current thread
+        return getDriver();
     }
 
+    /**
+     * Get current thread’s WebDriver instance.
+     */
     public static WebDriver getDriver() {
-        return driver;
+        return driver.get();
     }
 
+    /**
+     * Quit and remove WebDriver for the current thread.
+     */
     public static void quitDriver() {
-        if (driver != null) {
-            driver.quit();
+        WebDriver localDriver = driver.get();
+        if (localDriver != null) {
+            localDriver.quit();
+            driver.remove(); // avoid memory leaks
         }
     }
 }

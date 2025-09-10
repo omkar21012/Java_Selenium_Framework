@@ -20,18 +20,17 @@ public class LoginPage extends BasePage {
     @FindBy(xpath = "//button[@type='submit']")
     private WebElement loginButton;
 
-    public LoginPage(WebDriver driver)
-    {
+    public LoginPage(WebDriver driver) {
         super(driver);
     }
 
-    public void Login(String username,String pass)
-    {
-       //click(userID);
-       type(userID,username);
-       type(password,pass);
+    public void Login(String username, String pass) {
+        //click(userID);
+        type(userID, username);
+        type(password, pass);
         click(login_button);
     }
+
     public boolean isDashboardVisible() {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(10));
         try {
@@ -41,18 +40,12 @@ public class LoginPage extends BasePage {
         }
     }
 
+    public boolean isOnLoginPage() {
+
+        return isElementVisible(login_button);
 
 
-
-
-
-
-
-
-
-
-
-
+    }
 
 
 }
