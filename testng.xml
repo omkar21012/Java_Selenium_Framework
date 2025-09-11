@@ -1,15 +1,11 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
-
-<suite name="OrangeHRM Suite" parallel="false">
-
-    <!-- Pass browser name as parameter -->
-    <parameter name="browser" value="edge" />
-
-    <test name="OrangeHRM Tests">
+<suite name="ParallelSuite" parallel="methods" thread-count="3">
+    <test name="ChromeTests">
+        <parameter name="browser" value="chrome"/>
+        <parameter name="headless" value="false"/> <!-- local default -->
         <classes>
-            <class name="Tests.OrangeHrm.Login" />
+            <class name="Tests.OrangeHrm.Login"/>
+            <class name="Tests.OrangeHrm.SearchTest"/>
         </classes>
     </test>
-
 </suite>

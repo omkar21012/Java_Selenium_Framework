@@ -1,15 +1,15 @@
 package listeners;
 
 import Utils.DriverFactory;
-import Utils.ScreenshotUtil;
 import Utils.ExtentManager;
+import Utils.ScreenshotUtil;
 import com.aventstack.extentreports.ExtentReports;
 import com.aventstack.extentreports.ExtentTest;
 import com.aventstack.extentreports.Status;
+import org.openqa.selenium.WebDriver;
 import org.testng.ITestContext;
 import org.testng.ITestListener;
 import org.testng.ITestResult;
-import org.openqa.selenium.WebDriver;
 
 public class TestListener implements ITestListener {
 

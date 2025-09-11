@@ -1,0 +1,20 @@
+[
+  {
+    "browser": "edge",
+    "baseUrl": "https://opensource-demo.orangehrmlive.com/",
+    "username": "Admin",
+    "password": "admin123"
+  },
+  {
+    "browser": "edge",
+    "baseUrl": "https://opensource-demo.orangehrmlive.com/",
+    "username": "Admin",
+    "password": "admin1234"
+  },
+  {
+    "browser": "chrome",
+    "baseUrl": "https://www.apple.com",
+    "username": "Admin",
+    "password": "admin123"
+  }
+]
