@@ -32,6 +32,6 @@ public class Login extends BaseTest {
         homePage.Logout("Logout");
         loginPage.Login("omkar", "pass");
         boolean a = loginPage.isOnLoginPage();
-        Assert.assertTrue(a, "Demo placeholder test");
+        Assert.assertFalse(a, "Demo placeholder test");
     }
 }
