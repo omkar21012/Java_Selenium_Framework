@@ -3,59 +3,57 @@ package Utils;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
+import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.firefox.FirefoxOptions;
 
 public class DriverFactory {
 
-    // Thread-safe WebDriver (each test thread gets its own instance)
     private static final ThreadLocal<WebDriver> driver = new ThreadLocal<>();
 
-    /**
-     * Initialize WebDriver for the given browser.
-     * Each thread gets its own driver instance.
-     */
-    public static WebDriver initDriver(String browser) {
+    public static WebDriver initDriver(String browser, boolean headless) {
         WebDriver localDriver;
 
         switch (browser.toLowerCase()) {
             case "firefox":
                 WebDriverManager.firefoxdriver().setup();
-                localDriver = new FirefoxDriver();
+                FirefoxOptions firefoxOptions = new FirefoxOptions();
+                if (headless) firefoxOptions.addArguments("--headless=new");
+                localDriver = new FirefoxDriver(firefoxOptions);
                 break;
 
             case "edge":
                 WebDriverManager.edgedriver().setup();
-                localDriver = new EdgeDriver();
+                EdgeOptions edgeOptions = new EdgeOptions();
+                if (headless) edgeOptions.addArguments("--headless=new");
+                localDriver = new EdgeDriver(edgeOptions);
                 break;
 
             case "chrome":
             default:
                 WebDriverManager.chromedriver().setup();
-                localDriver = new ChromeDriver();
+                ChromeOptions chromeOptions = new ChromeOptions();
+                if (headless) chromeOptions.addArguments("--headless=new", "--disable-gpu", "--window-size=1920,1080");
+                localDriver = new ChromeDriver(chromeOptions);
                 break;
         }
 
         localDriver.manage().window().maximize();
-        driver.set(localDriver); // bind driver to current thread
+        driver.set(localDriver);
         return getDriver();
     }
 
-    /**
-     * Get current thread’s WebDriver instance.
-     */
     public static WebDriver getDriver() {
         return driver.get();
     }
 
-    /**
-     * Quit and remove WebDriver for the current thread.
-     */
     public static void quitDriver() {
         WebDriver localDriver = driver.get();
         if (localDriver != null) {
             localDriver.quit();
-            driver.remove(); // avoid memory leaks
+            driver.remove();
         }
     }
 }

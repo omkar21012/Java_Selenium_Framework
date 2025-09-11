@@ -28,6 +28,10 @@ public class Login extends BaseTest {
 
     @Test(priority = 2)
     public void invalidLoginTest() {
-        Assert.assertTrue(true, "Demo placeholder test");
+
+        homePage.Logout("Logout");
+        loginPage.Login("omkar", "pass");
+        boolean a = loginPage.isOnLoginPage();
+        Assert.assertTrue(a, "Demo placeholder test");
     }
 }

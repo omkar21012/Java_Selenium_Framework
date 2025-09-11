@@ -2,6 +2,7 @@
 <suite name="ParallelSuite" parallel="methods" thread-count="3">
     <test name="ChromeTests">
         <parameter name="browser" value="chrome"/>
+        <parameter name="headless" value="false"/> <!-- local default -->
         <classes>
             <class name="Tests.OrangeHrm.Login"/>
             <class name="Tests.OrangeHrm.SearchTest"/>
