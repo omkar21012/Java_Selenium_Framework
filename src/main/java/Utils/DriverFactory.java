@@ -42,10 +42,10 @@ public class DriverFactory {
 
         localDriver.manage().window().maximize();
         driver.set(localDriver);
-        return getDriver();
+        return driver();
     }
 
-    public static WebDriver getDriver() {
+    public static WebDriver driver() {
         return driver.get();
     }
 

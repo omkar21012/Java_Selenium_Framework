@@ -25,7 +25,7 @@ public class ExtentManager {
         extent.attachReporter(sparkReporter);
 
         extent.setSystemInfo("Tester", "Omkar Mule");
-        extent.setSystemInfo("Environment", "QA");
+        extent.setSystemInfo("Environment", "QA_orangeHRM_Freeze");
         extent.setSystemInfo("Browser", "Chrome");
 
         return extent;

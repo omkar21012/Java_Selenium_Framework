@@ -14,53 +14,39 @@ public class BaseTest {
     protected LoginPage loginPage;
     protected HomePage homePage;
 
-    /**
-     * Clear screenshots folder once before the entire test suite.
-     */
     @BeforeSuite(alwaysRun = true)
     public void beforeSuite() {
         ScreenshotUtil.clearScreenshotsFolder();
         System.out.println("✅ Cleared screenshots folder before test suite.");
     }
 
-    /**
-     * Set up WebDriver before each test method.
-     * Supports headless mode via TestNG parameter.
-     *
-     * @param browser  Browser type (chrome, firefox, edge)
-     * @param headless true to run in headless mode
-     */
     @Parameters({"browser", "headless"})
-    @BeforeMethod(alwaysRun = true)
+    @BeforeMethod(alwaysRun = true) // ✅ one browser per test method
     public void setUp(@Optional("chrome") String browser,
                       @Optional("false") String headless) {
 
-        // Convert headless string to boolean
         boolean isHeadless = Boolean.parseBoolean(headless);
 
-        // Load config from JSON (configIndex can be passed as system property)
+        // Load config JSON
         String indexProp = System.getProperty("configIndex", "0");
         int index = Integer.parseInt(indexProp);
         config = readJson.getConfigByIndex(index);
 
-        // Initialize WebDriver for this thread
+        // Initialize driver for this thread
         WebDriver driver = DriverFactory.initDriver(browser, isHeadless);
 
-        // Open the base URL
+        // Open base URL
         driver.get(config.getString("baseUrl"));
 
         // Initialize page objects
         loginPage = new LoginPage(driver);
         homePage = new HomePage(driver);
 
-        // Login before each test
+        // Login before each test method
         loginPage.Login(config.getString("username"), config.getString("password"));
         System.out.println("✅ Logged in on thread: " + Thread.currentThread().getId());
     }
 
-    /**
-     * Tear down WebDriver after each test method.
-     */
     @AfterMethod(alwaysRun = true)
     public void tearDown() {
         try {
@@ -74,10 +60,7 @@ public class BaseTest {
         }
     }
 
-    /**
-     * Getter for current thread's WebDriver instance.
-     */
     public WebDriver getDriver() {
-        return DriverFactory.getDriver();
+        return DriverFactory.driver();
     }
 }
