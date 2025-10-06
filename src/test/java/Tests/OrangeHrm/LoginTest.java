@@ -7,7 +7,7 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
 
-public class Login extends BaseTest {
+public class LoginTest extends BaseTest {
     private LoginPage loginPage;
     private HomePage homePage;
     private SoftAssert softAssert;
