@@ -2,12 +2,12 @@ name: Nightly Selenium Run
 
 on:
   schedule:
-    - cron: '0 2 * * *'    # Runs every night at 2 AM UTC
-  workflow_dispatch:        # Allows manual trigger from GitHub UI
+    - cron: '0 2 * * *'  # Every night at 2 AM UTC
+  workflow_dispatch:
 
 jobs:
   run-tests:
-    runs-on: windows-latest   # Use Windows for ChromeDriver compatibility
+    runs-on: windows-latest
 
     steps:
       - name: Checkout code
@@ -19,7 +19,7 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Cache Maven packages
+      - name: Cache Maven dependencies
         uses: actions/cache@v3
         with:
           path: ~/.m2
@@ -27,23 +27,22 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Verify Maven installation
+      - name: Verify Maven
         run: mvn -v
+        shell: bash
 
-      - name: Install dependencies and run tests
+      - name: Run tests with Maven
         run: mvn clean test -Dmaven.test.failure.ignore=true
+        shell: bash
 
-      # 🧠 Debugging step to see where reports are created
       - name: List report folder
         if: always()
-        run: |
-          echo "Listing test-output folder..."
-          dir test-output
+        run: ls -R test-output
+        shell: bash
 
-      # 📊 Upload Extent Report
       - name: Upload Extent Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ExtentReport
-          path: test-output/ExtentReport.html
+          path: test-output/
