@@ -1,0 +1,44 @@
+name: Nightly Selenium Run
+
+on:
+  schedule:
+    - cron: '0 2 * * *'   # Runs every night at 2 AM UTC
+  workflow_dispatch:       # Allows manual run from GitHub UI
+
+jobs:
+  run-tests:
+    runs-on: windows-latest   # or ubuntu-latest if your tests support Linux
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Set up Maven
+        run: mvn -v
+
+      - name: Install dependencies & run tests
+        run: mvn clean test
+
+      - name: Archive test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: target/surefire-reports/
+
+      - name: Archive screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: screenshots
+          path: target/screenshots/
+
+      - name: Send Email Report (Optional)
+        if: always()
+        run: python send_report.py

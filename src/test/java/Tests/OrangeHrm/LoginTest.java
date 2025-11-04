@@ -26,6 +26,7 @@ public class LoginTest extends BaseTest {
         softAssert.assertAll();
     }
 
+
     @Test(priority = 2)
     public void invalidLoginTest() {
 
