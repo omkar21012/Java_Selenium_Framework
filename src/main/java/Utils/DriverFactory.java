@@ -1,6 +1,5 @@
 package Utils;
 
-import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -18,14 +17,12 @@ public class DriverFactory {
 
         switch (browser.toLowerCase()) {
             case "firefox":
-                WebDriverManager.firefoxdriver().setup();
                 FirefoxOptions firefoxOptions = new FirefoxOptions();
                 if (headless) firefoxOptions.addArguments("--headless=new");
                 localDriver = new FirefoxDriver(firefoxOptions);
                 break;
 
             case "edge":
-                WebDriverManager.edgedriver().setup();
                 EdgeOptions edgeOptions = new EdgeOptions();
                 if (headless) edgeOptions.addArguments("--headless=new");
                 localDriver = new EdgeDriver(edgeOptions);
@@ -33,7 +30,6 @@ public class DriverFactory {
 
             case "chrome":
             default:
-                WebDriverManager.chromedriver().setup();
                 ChromeOptions chromeOptions = new ChromeOptions();
                 //chromeOptions.addArguments("--incognito mode");
                 if (headless) chromeOptions.addArguments("--headless=new", "--disable-gpu", "--window-size=1920,1080","--incognito mode");
