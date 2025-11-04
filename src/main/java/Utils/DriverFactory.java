@@ -1,5 +1,6 @@
 package Utils;
 
+import io.github.bonigarcia.wdm.WebDriverManager;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
@@ -17,6 +18,7 @@ public class DriverFactory {
 
         switch (browser.toLowerCase()) {
             case "firefox":
+                WebDriverManager.firefoxdriver().setup();
                 FirefoxOptions firefoxOptions = new FirefoxOptions();
                 if (headless) firefoxOptions.addArguments("--headless=new");
                 firefoxOptions.addArguments("--no-sandbox");
@@ -25,6 +27,7 @@ public class DriverFactory {
                 break;
 
             case "edge":
+                WebDriverManager.edgedriver().setup();
                 EdgeOptions edgeOptions = new EdgeOptions();
                 if (headless) edgeOptions.addArguments("--headless=new");
                 edgeOptions.addArguments("--no-sandbox");
@@ -34,9 +37,10 @@ public class DriverFactory {
 
             case "chrome":
             default:
+                WebDriverManager.chromedriver().setup();
                 ChromeOptions chromeOptions = new ChromeOptions();
 
-                // 🧱 Must-have arguments for Jenkins/CI stability
+                // ✅ Stable and compatible arguments
                 chromeOptions.addArguments("--no-sandbox");
                 chromeOptions.addArguments("--disable-dev-shm-usage");
                 chromeOptions.addArguments("--disable-extensions");
@@ -46,8 +50,8 @@ public class DriverFactory {
                 chromeOptions.addArguments("--disable-infobars");
                 chromeOptions.addArguments("--window-size=1920,1080");
 
-                // Optional: separate profile path (avoid permission issues)
-                chromeOptions.addArguments("--user-data-dir=C:/temp/chrome-profile");
+                // ❌ REMOVE user-data-dir (causes Chrome to crash in parallel)
+                // chromeOptions.addArguments("--user-data-dir=C:/temp/chrome-profile");
 
                 if (headless) {
                     chromeOptions.addArguments("--headless=new");
