@@ -1,6 +1,6 @@
 package Tests.OrangeHrm;
 
-import Pages.BasePage;
+
 import Pages.OrangeHrm.HomePage;
 import Pages.OrangeHrm.PersonalDetailsPage;
 import Pages.OrangeHrm.PimPage;
