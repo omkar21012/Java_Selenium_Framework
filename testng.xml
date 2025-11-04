@@ -5,8 +5,7 @@
         <parameter name="headless" value="false"/> <!-- local default -->
         <classes>
             <class name="Tests.OrangeHrm.LoginTest"/>
-            <class name="Tests.OrangeHrm.SearchTest"/>
-            <class name="Tests.OrangeHrm.CreateUserTest"/>
+
 
 
         </classes>

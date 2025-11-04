@@ -2,10 +2,13 @@ package Tests.OrangeHrm;
 
 import Pages.OrangeHrm.HomePage;
 import Pages.OrangeHrm.LoginPage;
+import Utils.dataProvider;
 import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 import org.testng.asserts.SoftAssert;
+
+import java.util.Map;
 
 public class LoginTest extends BaseTest {
     private LoginPage loginPage;
@@ -19,12 +22,20 @@ public class LoginTest extends BaseTest {
         softAssert = new SoftAssert();
     }
 
-    @Test(priority = 1)
-    public void validLoginTest() {
+    @Test(dataProvider = "loginData", dataProviderClass = dataProvider.class)
+    public void validLoginTest(Map<String, String> data) {
+
+        String username = data.get("username");
+        String password = data.get("password");
+        homePage.Logout("Logout");
+
+        loginPage.Login(username, password);
+
         boolean isLoggedIn = homePage.IsOnHomePage();
         softAssert.assertTrue(isLoggedIn, "Not logged in into app");
         softAssert.assertAll();
     }
+
 
     @Test(priority = 2)
     public void invalidLoginTest() {
@@ -32,6 +43,6 @@ public class LoginTest extends BaseTest {
         homePage.Logout("Logout");
         loginPage.Login("omkar", "pass");
         boolean a = loginPage.isOnLoginPage();
-        Assert.assertFalse(a, "Demo placeholder test");
+        Assert.assertTrue(a, "Demo placeholder test");
     }
 }
