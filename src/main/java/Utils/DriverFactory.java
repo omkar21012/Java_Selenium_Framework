@@ -31,8 +31,8 @@ public class DriverFactory {
             case "chrome":
             default:
                 ChromeOptions chromeOptions = new ChromeOptions();
-                if (headless)
-                    chromeOptions.addArguments("--headless=new", "--disable-gpu", "--window-size=1920,1080");
+                //chromeOptions.addArguments("--incognito mode");
+                if (headless) chromeOptions.addArguments("--headless=new", "--disable-gpu", "--window-size=1920,1080","--incognito mode");
                 localDriver = new ChromeDriver(chromeOptions);
                 break;
         }
