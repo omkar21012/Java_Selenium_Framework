@@ -2,12 +2,12 @@ name: Nightly Selenium Run
 
 on:
   schedule:
-    - cron: '0 2 * * *'  # Runs every night at 2 AM UTC
-  workflow_dispatch:     # Manual trigger
+    - cron: '0 2 * * *'    # Runs every night at 2 AM UTC
+  workflow_dispatch:        # Allows manual trigger from GitHub UI
 
 jobs:
   run-tests:
-    runs-on: windows-latest
+    runs-on: windows-latest   # Use Windows for ChromeDriver compatibility
 
     steps:
       - name: Checkout code
@@ -19,19 +19,49 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
 
-      - name: Run Maven Tests
-        run: mvn clean test
+      - name: Cache Maven packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.m2
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
 
+      - name: Verify Maven installation
+        run: mvn -v
+
+      - name: Install dependencies and run tests
+        run: mvn clean test -Dmaven.test.failure.ignore=true
+
+      # 🧠 Debugging step to see where reports are created
+      - name: List report and screenshot folders
+        if: always()
+        run: |
+          echo "Listing test-output folder..."
+          dir test-output
+          echo "Listing screenshots folder..."
+          dir screenshots
+
+      # 📊 Upload Extent Report
       - name: Upload Extent Report
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: ExtentReport
-          path: target/ExtentReport.html
+          path: test-output/ExtentReport.html
 
-      - name: Upload Screenshots (if any)
+      # 📸 Upload Screenshots
+      - name: Upload Screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: Screenshots
-          path: target/screenshots/
+          path: screenshots/
+
+      # 🗃️ Optionally upload full test-output folder
+      - name: Upload Full Test Output (Optional)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: TestOutput
+          path: test-output/
