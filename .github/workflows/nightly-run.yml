@@ -34,13 +34,11 @@ jobs:
         run: mvn clean test -Dmaven.test.failure.ignore=true
 
       # 🧠 Debugging step to see where reports are created
-      - name: List report and screenshot folders
+      - name: List report folder
         if: always()
         run: |
           echo "Listing test-output folder..."
           dir test-output
-          echo "Listing screenshots folder..."
-          dir screenshots
 
       # 📊 Upload Extent Report
       - name: Upload Extent Report
@@ -49,19 +47,3 @@ jobs:
         with:
           name: ExtentReport
           path: test-output/ExtentReport.html
-
-      # 📸 Upload Screenshots
-      - name: Upload Screenshots
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: Screenshots
-          path: screenshots/
-
-      # 🗃️ Optionally upload full test-output folder
-      - name: Upload Full Test Output (Optional)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: TestOutput
-          path: test-output/
