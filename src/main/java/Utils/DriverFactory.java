@@ -8,6 +8,9 @@ import org.openqa.selenium.edge.EdgeDriver;
 import org.openqa.selenium.edge.EdgeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.firefox.FirefoxOptions;
+import org.openqa.selenium.remote.RemoteWebDriver;
+
+import java.net.URL;
 
 public class DriverFactory {
 
@@ -15,59 +18,80 @@ public class DriverFactory {
 
     public static WebDriver initDriver(String browser, boolean headless) {
         WebDriver localDriver;
-
-        switch (browser.toLowerCase()) {
-            case "firefox":
-                WebDriverManager.firefoxdriver().setup();
-                FirefoxOptions firefoxOptions = new FirefoxOptions();
-                if (headless) firefoxOptions.addArguments("--headless=new");
-                firefoxOptions.addArguments("--no-sandbox");
-                firefoxOptions.addArguments("--disable-dev-shm-usage");
-                localDriver = new FirefoxDriver(firefoxOptions);
-                break;
-
-            case "edge":
-                WebDriverManager.edgedriver().setup();
-                EdgeOptions edgeOptions = new EdgeOptions();
-                if (headless) edgeOptions.addArguments("--headless=new");
-                edgeOptions.addArguments("--no-sandbox");
-                edgeOptions.addArguments("--disable-dev-shm-usage");
-                localDriver = new EdgeDriver(edgeOptions);
-                break;
-
-            case "chrome":
-            default:
-                WebDriverManager.chromedriver().setup();
-                ChromeOptions chromeOptions = new ChromeOptions();
-
-                // ✅ Stable and compatible arguments
-                chromeOptions.addArguments("--no-sandbox");
-                chromeOptions.addArguments("--disable-dev-shm-usage");
-                chromeOptions.addArguments("--disable-extensions");
-                chromeOptions.addArguments("--disable-gpu");
-                chromeOptions.addArguments("--remote-allow-origins=*");
-                chromeOptions.addArguments("--disable-notifications");
-                chromeOptions.addArguments("--disable-infobars");
-                chromeOptions.addArguments("--window-size=1920,1080");
-
-                // ❌ REMOVE user-data-dir (causes Chrome to crash in parallel)
-                // chromeOptions.addArguments("--user-data-dir=C:/temp/chrome-profile");
-
-                if (headless) {
-                    chromeOptions.addArguments("--headless=new");
-                }
-
-                localDriver = new ChromeDriver(chromeOptions);
-                break;
-        }
+        String runMode = System.getProperty("runMode", "local"); // default = local
+        String gridUrl = System.getProperty("gridUrl", "http://localhost:4444/wd/hub");
 
         try {
-            localDriver.manage().window().maximize();
+            switch (browser.toLowerCase()) {
+                case "firefox":
+                    FirefoxOptions firefoxOptions = new FirefoxOptions();
+                    if (headless) firefoxOptions.addArguments("--headless=new");
+                    firefoxOptions.addArguments("--no-sandbox");
+                    firefoxOptions.addArguments("--disable-dev-shm-usage");
+
+                    if (runMode.equalsIgnoreCase("grid")) {
+                        localDriver = new RemoteWebDriver(new URL(gridUrl), firefoxOptions);
+                        System.out.println("✅ Running Firefox on Docker Grid");
+                    } else {
+                        WebDriverManager.firefoxdriver().setup();
+                        localDriver = new FirefoxDriver(firefoxOptions);
+                        System.out.println("✅ Running Firefox locally");
+                    }
+                    break;
+
+                case "edge":
+                    EdgeOptions edgeOptions = new EdgeOptions();
+                    if (headless) edgeOptions.addArguments("--headless=new");
+                    edgeOptions.addArguments("--no-sandbox");
+                    edgeOptions.addArguments("--disable-dev-shm-usage");
+
+                    if (runMode.equalsIgnoreCase("grid")) {
+                        localDriver = new RemoteWebDriver(new URL(gridUrl), edgeOptions);
+                        System.out.println("✅ Running Edge on Docker Grid");
+                    } else {
+                        WebDriverManager.edgedriver().setup();
+                        localDriver = new EdgeDriver(edgeOptions);
+                        System.out.println("✅ Running Edge locally");
+                    }
+                    break;
+
+                case "chrome":
+                default:
+                    ChromeOptions chromeOptions = new ChromeOptions();
+                    chromeOptions.addArguments("--no-sandbox");
+                    chromeOptions.addArguments("--disable-dev-shm-usage");
+                    chromeOptions.addArguments("--disable-extensions");
+                    chromeOptions.addArguments("--disable-gpu");
+                    chromeOptions.addArguments("--remote-allow-origins=*");
+                    chromeOptions.addArguments("--disable-notifications");
+                    chromeOptions.addArguments("--disable-infobars");
+                    chromeOptions.addArguments("--window-size=1920,1080");
+
+                    if (headless) chromeOptions.addArguments("--headless=new");
+
+                    if (runMode.equalsIgnoreCase("grid")) {
+                        localDriver = new RemoteWebDriver(new URL(gridUrl), chromeOptions);
+                        System.out.println("✅ Running Chrome on Docker Grid");
+                    } else {
+                        WebDriverManager.chromedriver().setup();
+                        localDriver = new ChromeDriver(chromeOptions);
+                        System.out.println("✅ Running Chrome locally");
+                    }
+                    break;
+            }
+
+            // Maximize window if possible
+            try {
+                localDriver.manage().window().maximize();
+            } catch (Exception e) {
+                System.out.println("⚠️ Could not maximize window (likely headless mode): " + e.getMessage());
+            }
+
+            driver.set(localDriver);
         } catch (Exception e) {
-            System.out.println("⚠️ Could not maximize window (likely headless mode): " + e.getMessage());
+            throw new RuntimeException("❌ Failed to start WebDriver: " + e.getMessage(), e);
         }
 
-        driver.set(localDriver);
         return driver();
     }
 
