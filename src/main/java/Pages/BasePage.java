@@ -17,8 +17,8 @@ public class BasePage {
         this.driver = driver;
         PageFactory.initElements(driver, this);
         this.wait = new FluentWait<>(driver)
-                .withTimeout(Duration.ofSeconds(20))
-                .pollingEvery(Duration.ofSeconds(2))
+                .withTimeout(Duration.ofSeconds(10))
+                .pollingEvery(Duration.ofSeconds(4))
                 .ignoring(NoSuchElementException.class, WebDriverException.class);
     }
 

@@ -23,7 +23,7 @@ public class SearchTest extends BaseTest {
         Assert.assertTrue(value, "not present");
     }
 
-    @Test
+    @Test(priority = 2)
     public void VerifyList() {
         HomePage homePage = new HomePage(getDriver());
         homePage.waitForSeconds(2);

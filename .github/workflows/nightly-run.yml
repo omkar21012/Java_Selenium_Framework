@@ -1,48 +1,79 @@
-name: Nightly Selenium Run
+name: Nightly Selenium Grid Run
 
 on:
   schedule:
-    - cron: '0 2 * * *'  # Every night at 2 AM UTC
-  workflow_dispatch:
+    - cron: '30 20 * * *'  # 🕑 Runs every night at 2:00 AM IST (20:30 UTC)
+  workflow_dispatch:        # ▶ Manual trigger option
 
 jobs:
-  run-tests:
-    runs-on: windows-latest
+  selenium-tests:
+    runs-on: ubuntu-latest   # Use Linux for Docker support
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      # 1️⃣ Checkout source code
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
+      # 2️⃣ Set up JDK (change version if needed)
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           java-version: '21'
           distribution: 'temurin'
+          cache: maven
 
-      - name: Cache Maven dependencies
-        uses: actions/cache@v3
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
-          restore-keys: |
-            ${{ runner.os }}-maven-
+      # 3️⃣ Start Selenium Grid using Docker
+      - name: Start Selenium Grid
+        run: |
+          docker network create selenium-grid || true
 
+          echo "🚀 Starting Selenium Hub..."
+          docker run -d --name selenium-hub --network selenium-grid -p 4442-4444:4442-4444 selenium/hub:latest
+
+          echo "🚀 Starting Chrome Nodes..."
+          docker run -d --name chrome1 --network selenium-grid -e SE_EVENT_BUS_HOST=selenium-hub \
+            -e SE_EVENT_BUS_PUBLISH_PORT=4442 -e SE_EVENT_BUS_SUBSCRIBE_PORT=4443 \
+            -e SE_NODE_OVERRIDE_HEADLESS=false -p 7900:7900 selenium/node-chrome:latest
+
+          docker run -d --name chrome2 --network selenium-grid -e SE_EVENT_BUS_HOST=selenium-hub \
+            -e SE_EVENT_BUS_PUBLISH_PORT=4442 -e SE_EVENT_BUS_SUBSCRIBE_PORT=4443 \
+            -e SE_NODE_OVERRIDE_HEADLESS=false -p 7901:7900 selenium/node-chrome:latest
+
+          echo "🕐 Waiting for Selenium Grid to be ready..."
+          sleep 20
+
+          curl http://localhost:4444/status || true
+
+      # 4️⃣ Verify Maven setup
       - name: Verify Maven
         run: mvn -v
-        shell: bash
 
-      - name: Run tests with Maven
-        run: mvn clean test -Dmaven.test.failure.ignore=true
-        shell: bash
+      # 5️⃣ Run Selenium TestNG suite on the Grid
+      - name: Run Selenium Tests on Grid
+        run: |
+          mvn clean test -Dmaven.test.failure.ignore=true \
+            -DrunMode=grid \
+            -Dbrowser=chrome \
+            -Dheadless=false \
+            -Dsurefire.suiteXmlFiles=testng.xml
 
-      - name: List report folder
+      # 6️⃣ List test-output (for debugging)
+      - name: List test-output folder
         if: always()
-        run: ls -R test-output
-        shell: bash
+        run: ls -R test-output || true
 
-      - name: Upload Extent Report
+      # 7️⃣ Upload Extent/TestNG Reports
+      - name: Upload Test Reports
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: ExtentReport
+          name: Selenium-Test-Reports
           path: test-output/
+
+      # 8️⃣ Stop & remove Docker containers (cleanup)
+      - name: Stop and clean up Docker
+        if: always()
+        run: |
+          echo "🧹 Cleaning up containers..."
+          docker rm -f chrome1 chrome2 selenium-hub || true
+          docker network rm selenium-grid || true
