@@ -40,7 +40,7 @@ public class CreateUserTest extends BaseTest {
         Boolean value = personalDetails.isOnPersonalDetailsPage();
         System.out.println("I am learning GIT");
 
-        Assert.assertTrue(value, "Not navigated to the personal details page");
+        Assert.assertTrue(value, "Not navigated to the personal details page please check it");
 
     }
 
